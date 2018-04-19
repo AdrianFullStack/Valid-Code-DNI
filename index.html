@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DEMO VALID DNI</title>
+</head>
+<body>
+	<input type="text" id="num">
+	<button onclick="validar_dni();">Valid</button>
+
+	<script type="text/javascript">
+		function validar_dni() {
+			var num_dni = document.getElementById("num").value;
+			var response = valid(num_dni);
+
+			if( response ){
+				console.log("Si es un documento valido")
+			}else{
+				console.log("No es un documento valido")
+			}
+		}
+
+		function valid(num) {
+			if(num != ''){
+				var addition = 0;
+				var hash = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+				var num_length = num.length;
+				var identificationComponent = num.substring(0, num_length - 1);
+				var identificationComponentLength = identificationComponent.length;
+				var diff = hash.length - identificationComponentLength;
+
+				for (var i = identificationComponentLength - 1; i >= 0; i--)
+		        {
+		            addition += (identificationComponent[i] - '0') * hash[i + diff];
+		        }
+
+		        addition = 11 - (addition % 11);
+
+		        if (addition == 11)
+		        {
+		            addition = 0;
+		        }
+
+		        var last = num[num_length - 1].toUpperCase();
+		        if (num_length == 11)
+		        {
+		            // The identification document corresponds to a RUC.
+		            return addition === last - '0';
+		        }
+		        else if (isNumber(last))
+		        {
+		            // The identification document corresponds to a DNI with a number as verification digit.
+		            var hashNumbers = ['6', '7', '8', '9', '0', '1', '1', '2', '3', '4', '5'];
+		            return last === hashNumbers[addition];
+		        }
+		        else if (isLetter(last))
+		        {
+		            // The identification document corresponds to a DNI with a letter as verification digit.
+		            var hashLetters = ['K', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+		            return last === hashLetters[addition];
+		        }
+			}
+
+			return false;
+		}
+
+		function isNumber(n) {
+		  return !isNaN(parseFloat(n)) && isFinite(n);
+		}
+
+		function isLetter(strValue) {
+		  var objRegExp  = /^[a-z]+$/;
+		  return objRegExp.test(strValue);
+		}
+	</script>
+</body>
+</html>
